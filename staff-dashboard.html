@@ -8,6 +8,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        .dashboard-body {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .dashboard-body.loaded {
+            opacity: 1;
+        }
+        #unauthorizedMessage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #6200EA;
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 2rem;
+            z-index: 9999;
+            font-family: 'Poppins', sans-serif;
+        }
+        #unauthorizedMessage h2 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        #unauthorizedMessage p {
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        #unauthorizedMessage a {
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border: 2px solid white;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        #unauthorizedMessage a:hover {
+            background: white;
+            color: #6200EA;
+        }
         .loading-screen {
             position: fixed;
             top: 0;
@@ -39,42 +83,53 @@
         }
     </style>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Get user data
+        // Immediate auth check
+        (function() {
             const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-            
-            // If not authenticated or not staff/owner, redirect to home
             if (!user.isAuthenticated || (user.role !== 'staff' && user.role !== 'owner')) {
-                window.location.href = 'index.html';
+                // Show unauthorized message and redirect after delay
+                window.onload = () => {
+                    document.getElementById('unauthorizedMessage').style.display = 'flex';
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000); // 2 second delay before redirect
+                };
                 return;
             }
 
-            // Update staff name
-            document.getElementById('staffName').textContent = user.name;
+            // If authorized, show page when loaded
+            window.onload = () => {
+                // Update staff name
+                document.getElementById('staffName').textContent = user.name;
 
-            // Show admin controls for owner
-            if (user.role === 'owner') {
-                document.querySelectorAll('.admin-only').forEach(el => {
-                    el.style.display = 'block';
+                // Show admin controls for owner
+                if (user.role === 'owner') {
+                    document.querySelectorAll('.admin-only').forEach(el => {
+                        el.style.display = 'block';
+                    });
+                }
+
+                // Show the dashboard
+                document.body.classList.add('loaded');
+
+                // Handle logout
+                document.getElementById('logoutBtn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    sessionStorage.removeItem('user');
+                    window.location.href = 'index.html';
                 });
-            }
-
-            // Handle logout
-            document.getElementById('logoutBtn').addEventListener('click', (e) => {
-                e.preventDefault();
-                // Clear session
-                sessionStorage.removeItem('user');
-                // Redirect to home
-                window.location.href = 'index.html';
-            });
-
-            // Show dashboard and hide loading screen
-            document.querySelector('.dashboard-container').classList.add('loaded');
-            document.querySelector('.loading-screen').style.display = 'none';
-        });
+            };
+        })();
     </script>
 </head>
 <body class="dashboard-body">
+    <!-- Unauthorized Message -->
+    <div id="unauthorizedMessage">
+        <h2>Access Denied</h2>
+        <p>You need to be logged in as staff or owner to access this page.</p>
+        <a href="index.html">Return to Home</a>
+    </div>
+
     <!-- Loading Screen -->
     <div class="loading-screen">
         <div class="spinner"></div>
