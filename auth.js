@@ -63,21 +63,68 @@ class Auth {
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
-                // Check reCAPTCHA
-                const captchaResponse = grecaptcha.getResponse();
-                if (!captchaResponse) {
-                    alert('Please complete the reCAPTCHA verification');
-                    return;
-                }
+                // Get form data
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const isStaff = document.querySelector('.auth-tab.active').dataset.tab === 'staff';
                 
-                // Check rate limiting
-                const clientIP = await this.getClientIP();
-                if (rateLimiter.isBlocked(clientIP)) {
-                    alert('Too many login attempts. Please try again later.');
-                    return;
+                try {
+                    // Check rate limiting
+                    const userIP = 'test-ip'; // In production, get real IP
+                    if (rateLimiter.isBlocked(userIP)) {
+                        throw new Error('Too many login attempts. Please try again later.');
+                    }
+
+                    // Verify reCAPTCHA
+                    const recaptchaResponse = grecaptcha.getResponse();
+                    if (!recaptchaResponse) {
+                        throw new Error('Please complete the reCAPTCHA verification');
+                    }
+
+                    // Hash password
+                    const passwordHash = await hashPassword(password);
+                    
+                    // Check credentials
+                    const db = isStaff ? userDB.staff : userDB.users;
+                    const user = db.find(u => u.email === email && u.passwordHash === passwordHash);
+                    
+                    if (!user) {
+                        throw new Error('Invalid email or password');
+                    }
+                    
+                    // Record login attempt
+                    rateLimiter.recordAttempt(userIP);
+                    
+                    // Check if 2FA is enabled
+                    if (user.twoFactorEnabled) {
+                        // Store user data temporarily
+                        sessionStorage.setItem('pendingUser', JSON.stringify({
+                            id: user.id,
+                            email: user.email,
+                            role: user.role,
+                            name: user.name,
+                            twoFactorSecret: user.twoFactorSecret
+                        }));
+                        
+                        // Show 2FA verification modal
+                        document.getElementById('twoFactorVerifyModal').style.display = 'block';
+                    } else {
+                        // Login successful
+                        sessionStorage.setItem('currentUser', JSON.stringify({
+                            id: user.id,
+                            email: user.email,
+                            role: user.role,
+                            name: user.name
+                        }));
+                        
+                        // Redirect based on role
+                        window.location.href = user.role === 'admin' ? 'admin-dashboard.html' : 'dashboard.html';
+                    }
+                } catch (error) {
+                    alert(error.message);
+                    // Reset reCAPTCHA on error
+                    grecaptcha.reset();
                 }
-                
-                this.handleLogin(e);
             });
         }
 
@@ -126,51 +173,6 @@ class Auth {
         } catch (error) {
             console.error('Failed to get client IP:', error);
             return 'unknown';
-        }
-    }
-
-    async handleLogin(e) {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const isStaff = document.querySelector('.auth-tab[data-tab="staff"]').classList.contains('active');
-
-        try {
-            const passwordHash = await hashPassword(password);
-            const db = isStaff ? userDB.staff : userDB.users;
-            const user = db.find(u => u.email === email && u.passwordHash === passwordHash);
-
-            if (user) {
-                // Check 2FA if enabled
-                if (user.twoFactorEnabled) {
-                    const token = prompt('Enter your 2FA code:');
-                    if (!token || !(await this.securityManager.verify2FA(token))) {
-                        throw new Error('Invalid 2FA code');
-                    }
-                }
-
-                // Store session
-                sessionStorage.setItem('currentUser', JSON.stringify({
-                    id: user.id,
-                    email: user.email,
-                    role: user.role,
-                    name: user.name,
-                    twoFactorEnabled: user.twoFactorEnabled
-                }));
-
-                // Redirect based on role
-                if (isStaff) {
-                    window.location.href = 'staff-dashboard.html';
-                } else {
-                    window.location.href = 'user-dashboard.html';
-                }
-            } else {
-                throw new Error('Invalid credentials');
-            }
-        } catch (error) {
-            const clientIP = await this.getClientIP();
-            rateLimiter.recordAttempt(clientIP);
-            alert(error.message);
         }
     }
 

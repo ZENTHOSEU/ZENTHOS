@@ -2,20 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZENTHOS - Professional Code Solutions</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Add reCAPTCHA with explicit render -->
+    <script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit" async defer></script>
+    <script>
+        function onRecaptchaLoad() {
+            grecaptcha.render('recaptcha', {
+                'sitekey': '6LdkTgIrAAAAADoXsKLDqAAT_efR6kzf2pTiV0LP',
+                'theme': 'light',
+                'size': 'normal'
+            });
+        }
+    </script>
 </head>
 <body>
     <nav>
-        <div class="logo">ZENTHOS</div>
+        <a href="#home" class="logo">ZENTHOS</a>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
         <ul class="nav-links">
             <li><a href="#home">Home</a></li>
             <li><a href="#services">Services</a></li>
             <li><a href="#languages">Languages</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li><a href="#" id="loginButton" class="nav-login"><i class="fas fa-user"></i> Login</a></li>
         </ul>
     </nav>
 
@@ -127,7 +142,94 @@
         </div>
     </div>
 
-    <script src="chat.js"></script>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="auth-container">
+            <div class="auth-box">
+                <div class="modal-header">
+                    <h2>Login to ZENTHOS</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="user">User Login</button>
+                    <button class="auth-tab" data-tab="staff">Staff Login</button>
+                </div>
+                
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-input">
+                            <input type="password" id="password" required>
+                            <button type="button" class="toggle-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="remember">
+                            Remember me
+                        </label>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+
+                    <!-- Add reCAPTCHA -->
+                    <div class="form-group">
+                        <div id="recaptcha"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Login</button>
+
+                    <!-- Add Google Sign-In -->
+                    <div class="social-login">
+                        <p>Or sign in with:</p>
+                        <button type="button" id="googleSignIn" class="btn btn-google">
+                            <i class="fab fa-google"></i> Sign in with Google
+                        </button>
+                    </div>
+
+                    <!-- Add 2FA Setup Button -->
+                    <div class="two-factor-setup">
+                        <button type="button" id="setup2FA" class="btn btn-secondary">
+                            <i class="fas fa-shield-alt"></i> Enable Two-Factor Authentication
+                        </button>
+                    </div>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="#" id="registerLink">Register</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2FA Verification Modal -->
+    <div id="twoFactorVerifyModal" class="modal">
+        <div class="modal-content">
+            <h3>Two-Factor Authentication</h3>
+            <p>Enter the 6-digit code from your authenticator app:</p>
+            <input type="text" id="twoFactorCode" maxlength="6" placeholder="Enter code">
+            <div class="modal-buttons">
+                <button onclick="securityManager.verify2FALogin()" class="btn btn-primary">Verify</button>
+                <button onclick="this.parentElement.parentElement.parentElement.style.display='none'" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load required libraries -->
+    <script src="node_modules/qrcode/build/qrcode.min.js"></script>
+    <script src="node_modules/speakeasy/index.js"></script>
+    
+    <!-- Load our scripts -->
+    <script src="security.js"></script>
+    <script src="auth.js"></script>
     <script src="script.js"></script>
+    <script src="chat.js"></script>
 </body>
 </html>
