@@ -1,0 +1,10 @@
+{
+  "name": "zenthos",
+  "version": "1.0.0",
+  "description": "ZENTHOS Web Platform",
+  "main": "index.js",
+  "dependencies": {
+    "qrcode": "^1.5.4",
+    "speakeasy": "^2.0.0"
+  }
+}

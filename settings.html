@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZENTHOS - User Settings</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body class="settings-page">
+    <nav class="glass">
+        <a href="index.html" class="logo">
+            <i class="fas fa-code"></i>
+            ZENTHOS
+        </a>
+        <div class="nav-links">
+            <a href="index.html" class="btn btn-secondary">Home</a>
+            <a href="staff-dashboard.html" class="btn btn-secondary staff-only" style="display: none;">Dashboard</a>
+            <button id="logoutBtn" class="btn btn-primary">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </button>
+        </div>
+    </nav>
+
+    <main class="settings-container">
+        <div class="settings-sidebar glass">
+            <div class="settings-nav">
+                <button class="settings-nav-item active" data-section="appearance">
+                    <i class="fas fa-palette"></i>
+                    Appearance
+                </button>
+                <button class="settings-nav-item" data-section="account">
+                    <i class="fas fa-user-circle"></i>
+                    Account
+                </button>
+                <button class="settings-nav-item" data-section="security">
+                    <i class="fas fa-shield-alt"></i>
+                    Security
+                </button>
+                <button class="settings-nav-item" data-section="notifications">
+                    <i class="fas fa-bell"></i>
+                    Notifications
+                </button>
+                <button class="settings-nav-item" data-section="privacy">
+                    <i class="fas fa-lock"></i>
+                    Privacy
+                </button>
+            </div>
+        </div>
+
+        <div class="settings-content">
+            <!-- Appearance Section -->
+            <section id="appearance" class="settings-section active">
+                <h2><i class="fas fa-palette"></i> Appearance</h2>
+                <div class="card settings-card">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Theme</h3>
+                            <p>Choose between light and dark mode</p>
+                        </div>
+                        <div class="theme-switch-wrapper">
+                            <label class="theme-switch">
+                                <input type="checkbox" id="themeToggle">
+                                <span class="slider round"></span>
+                            </label>
+                            <span id="themeLabel">Light Mode</span>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Accent Color</h3>
+                            <p>Choose your preferred accent color</p>
+                        </div>
+                        <div class="color-picker">
+                            <button class="color-option active" data-color="#6200EA" style="background-color: #6200EA;"></button>
+                            <button class="color-option" data-color="#03DAC6" style="background-color: #03DAC6;"></button>
+                            <button class="color-option" data-color="#FF0266" style="background-color: #FF0266;"></button>
+                            <button class="color-option" data-color="#00C853" style="background-color: #00C853;"></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Account Section -->
+            <section id="account" class="settings-section">
+                <h2><i class="fas fa-user-circle"></i> Account Settings</h2>
+                <div class="card settings-card">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Profile Information</h3>
+                            <p>Update your personal information</p>
+                        </div>
+                        <form id="profileForm" class="settings-form">
+                            <div class="form-group">
+                                <label>Display Name</label>
+                                <input type="text" id="displayName" placeholder="Your display name">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="email" placeholder="Your email">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Section -->
+            <section id="security" class="settings-section">
+                <h2><i class="fas fa-shield-alt"></i> Security</h2>
+                <div class="card settings-card">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Change Password</h3>
+                            <p>Update your password</p>
+                        </div>
+                        <form id="passwordForm" class="settings-form">
+                            <div class="form-group">
+                                <label>Current Password</label>
+                                <input type="password" id="currentPassword" placeholder="Enter current password">
+                            </div>
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input type="password" id="newPassword" placeholder="Enter new password">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm New Password</label>
+                                <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Password</button>
+                        </form>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Two-Factor Authentication</h3>
+                            <p>Add an extra layer of security</p>
+                        </div>
+                        <div class="toggle-switch-wrapper">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="2faToggle">
+                                <span class="slider round"></span>
+                            </label>
+                            <span>Enable 2FA</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notifications Section -->
+            <section id="notifications" class="settings-section">
+                <h2><i class="fas fa-bell"></i> Notifications</h2>
+                <div class="card settings-card">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Email Notifications</h3>
+                            <p>Choose what emails you receive</p>
+                        </div>
+                        <div class="notification-settings">
+                            <div class="notification-option">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                                <span>Project Updates</span>
+                            </div>
+                            <div class="notification-option">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                                <span>Security Alerts</span>
+                            </div>
+                            <div class="notification-option">
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span>Marketing Emails</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Privacy Section -->
+            <section id="privacy" class="settings-section">
+                <h2><i class="fas fa-lock"></i> Privacy</h2>
+                <div class="card settings-card">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Profile Visibility</h3>
+                            <p>Control who can see your profile</p>
+                        </div>
+                        <select class="privacy-select">
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                            <option value="friends">Friends Only</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Data Usage</h3>
+                            <p>Manage how your data is used</p>
+                        </div>
+                        <div class="privacy-options">
+                            <div class="privacy-option">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                                <span>Allow Analytics</span>
+                            </div>
+                            <div class="privacy-option">
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span>Share Usage Data</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="settings.js"></script>
+</body>
+</html>

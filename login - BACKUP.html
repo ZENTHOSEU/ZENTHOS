@@ -7,8 +7,17 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Add reCAPTCHA -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <!-- Add reCAPTCHA with explicit render -->
+    <script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit" async defer></script>
+    <script>
+        function onRecaptchaLoad() {
+            grecaptcha.render('recaptcha', {
+                'sitekey': '6LdkTgIrAAAAADoXsKLDqAAT_efR6kzf2pTiV0LP',
+                'theme': 'light',
+                'size': 'normal'
+            });
+        }
+    </script>
     <!-- Add Google Sign-In -->
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
@@ -58,17 +67,23 @@
 
                 <!-- Add reCAPTCHA -->
                 <div class="form-group">
-                    <div id="recaptcha" class="g-recaptcha" 
-                         data-sitekey="6LcXXXXXXXXXXXXXXXXXXXXX"></div>
+                    <div id="recaptcha"></div>
                 </div>
 
-                <button type="submit" class="submit-button">Login</button>
+                <button type="submit" class="btn btn-primary">Login</button>
 
                 <!-- Add Google Sign-In -->
                 <div class="social-login">
                     <p>Or sign in with:</p>
                     <button type="button" id="googleSignIn" class="btn btn-google">
                         <i class="fab fa-google"></i> Sign in with Google
+                    </button>
+                </div>
+
+                <!-- Add 2FA Setup Button -->
+                <div class="two-factor-setup">
+                    <button type="button" id="setup2FA" class="btn btn-secondary">
+                        <i class="fas fa-shield-alt"></i> Enable Two-Factor Authentication
                     </button>
                 </div>
             </form>
@@ -78,18 +93,25 @@
             </div>
         </div>
 
-        <!-- 2FA Setup Modal (hidden by default) -->
-        <div id="twoFactorModal" class="modal" style="display: none;">
+        <!-- 2FA Verification Modal (hidden by default) -->
+        <div id="twoFactorVerifyModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <h3>Two-Factor Authentication</h3>
-                <p>Enhance your account security by enabling 2FA</p>
-                <button id="setup2FA" class="btn btn-primary">Set up 2FA</button>
-                <button class="btn btn-secondary modal-close">Skip</button>
+                <p>Enter the 6-digit code from your authenticator app:</p>
+                <input type="text" id="twoFactorCode" maxlength="6" placeholder="Enter code">
+                <div class="modal-buttons">
+                    <button onclick="securityManager.verify2FALogin()" class="btn btn-primary">Verify</button>
+                    <button onclick="this.parentElement.parentElement.parentElement.style.display='none'" class="btn btn-secondary">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Load security and authentication scripts -->
+    <!-- Load required libraries -->
+    <script src="node_modules/qrcode/build/qrcode.min.js"></script>
+    <script src="node_modules/speakeasy/index.js"></script>
+    
+    <!-- Load our scripts -->
     <script src="security.js"></script>
     <script src="auth.js"></script>
 </body>
