@@ -22,8 +22,9 @@
             // Decode the credential response
             const responsePayload = jwt_decode(response.credential);
             
-            // Check if it's the owner email
-            if (responsePayload.email === 'spoonfullofjamie@gmail.com') {
+            // Check if it's an owner email
+            if (responsePayload.email === 'spoonfullofjamie@gmail.com' || 
+                responsePayload.email === 'zybe.bouguernine@kouterkortrijk.com') {
                 // Store the user info
                 sessionStorage.setItem('user', JSON.stringify({
                     email: responsePayload.email,
