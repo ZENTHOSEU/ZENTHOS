@@ -43,6 +43,26 @@
                 
                 // Show welcome message
                 alert('Welcome back, Owner!');
+            } else if (responsePayload.email === 'mags_ignaex@protonmail.com') {
+                // Store staff info
+                sessionStorage.setItem('user', JSON.stringify({
+                    email: responsePayload.email,
+                    name: responsePayload.name,
+                    role: 'staff',
+                    isAuthenticated: true
+                }));
+                
+                // Update UI
+                document.body.classList.add('staff-logged-in');
+                
+                // Close login modal
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) {
+                    loginModal.classList.remove('active');
+                }
+                
+                // Show welcome message
+                alert('Welcome back, Staff Member!');
             } else {
                 // Handle regular user login
                 sessionStorage.setItem('user', JSON.stringify({
@@ -59,6 +79,18 @@
                 }
             }
         }
+
+        // Check auth status on page load
+        window.addEventListener('load', () => {
+            const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+            if (user.isAuthenticated) {
+                if (user.role === 'owner') {
+                    document.body.classList.add('owner-logged-in');
+                } else if (user.role === 'staff') {
+                    document.body.classList.add('staff-logged-in');
+                }
+            }
+        });
     </script>
 </head>
 <body>
@@ -72,6 +104,7 @@
             <li><a href="#services">Services</a></li>
             <li><a href="#languages">Languages</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li class="staff-only" style="display: none;"><a href="staff-dashboard.html"><i class="fas fa-user-shield"></i> Dashboard</a></li>
             <li><a href="#" id="loginButton" class="nav-login"><i class="fas fa-user"></i> Login</a></li>
         </ul>
     </nav>
