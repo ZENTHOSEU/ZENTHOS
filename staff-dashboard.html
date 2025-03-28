@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZENTHOS - Staff Dashboard</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
         .dashboard-body {
             opacity: 0;
@@ -117,131 +119,166 @@
         <a href="index.html">Return to Home</a>
     </div>
 
-    <!-- Loading Screen -->
-    <div class="loading-screen">
-        <div class="spinner"></div>
-    </div>
-
     <div class="dashboard-container">
-        <aside class="dashboard-sidebar">
+        <aside class="dashboard-sidebar glass">
             <div class="sidebar-header">
-                <h2>ZENTHOS</h2>
+                <a href="index.html" class="logo">
+                    <i class="fas fa-code"></i>
+                    ZENTHOS
+                </a>
                 <p class="staff-name">Welcome, <span id="staffName">Staff</span></p>
             </div>
             
-            <nav class="dashboard-nav">
-                <a href="#" class="nav-item active" data-tab="overview">
-                    <i class="fas fa-home"></i> Overview
+            <nav class="sidebar-nav">
+                <a href="#overview" class="nav-item active">
+                    <i class="fas fa-chart-line"></i>
+                    Overview
                 </a>
-                <a href="#" class="nav-item" data-tab="projects">
-                    <i class="fas fa-project-diagram"></i> Projects
+                <a href="#projects" class="nav-item">
+                    <i class="fas fa-project-diagram"></i>
+                    Projects
                 </a>
-                <a href="#" class="nav-item" data-tab="users">
-                    <i class="fas fa-users"></i> Users
+                <a href="#clients" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    Clients
                 </a>
-                <a href="#" class="nav-item" data-tab="support">
-                    <i class="fas fa-headset"></i> Support
+                <a href="#tasks" class="nav-item">
+                    <i class="fas fa-tasks"></i>
+                    Tasks
                 </a>
-                <a href="#" class="nav-item" data-tab="analytics">
-                    <i class="fas fa-chart-bar"></i> Analytics
+                <a href="#messages" class="nav-item">
+                    <i class="fas fa-envelope"></i>
+                    Messages
                 </a>
-                <div class="admin-only" style="display: none;">
-                    <a href="#" class="nav-item" data-tab="staff">
-                        <i class="fas fa-user-shield"></i> Manage Staff
-                    </a>
-                    <a href="#" class="nav-item" data-tab="settings">
-                        <i class="fas fa-cog"></i> Settings
-                    </a>
-                </div>
+                <a href="#settings" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
             </nav>
 
             <div class="sidebar-footer">
-                <a href="#" id="logoutBtn" class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
+                <button id="logoutBtn" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
             </div>
         </aside>
 
         <main class="dashboard-main">
-            <header class="dashboard-header">
+            <header class="dashboard-header glass">
                 <div class="header-search">
-                    <input type="text" placeholder="Search...">
                     <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search projects, clients, or tasks...">
                 </div>
                 <div class="header-actions">
-                    <button class="notification-btn">
+                    <button class="btn btn-secondary">
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge">3</span>
                     </button>
-                    <div class="staff-profile">
-                        <img src="https://via.placeholder.com/40" alt="Staff Profile" class="profile-img">
-                        <div class="profile-info">
-                            <span id="staffNameHeader">Staff Name</span>
-                            <span id="staffRole" class="staff-role">Support Staff</span>
-                        </div>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <div class="user-profile">
+                        <img src="https://ui-avatars.com/api/?name=Staff&background=6200EA&color=fff" alt="Profile" class="profile-image">
+                        <span class="profile-name" id="profileName">Staff</span>
                     </div>
                 </div>
             </header>
 
             <div class="dashboard-content">
-                <!-- Overview Tab -->
-                <div class="dashboard-tab active" id="overview">
-                    <div class="dashboard-stats">
-                        <div class="stat-card">
-                            <h3>Active Projects</h3>
-                            <p class="stat-number">24</p>
-                            <span class="stat-trend positive">
-                                <i class="fas fa-arrow-up"></i> 12%
-                            </span>
+                <!-- Overview Section -->
+                <section id="overview" class="dashboard-section active">
+                    <div class="stats-grid">
+                        <div class="card stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Active Projects</h3>
+                                <p class="stat-number">12</p>
+                                <p class="stat-change positive">+2 this week</p>
+                            </div>
                         </div>
-                        <div class="stat-card">
-                            <h3>Support Tickets</h3>
-                            <p class="stat-number">15</p>
-                            <span class="stat-trend negative">
-                                <i class="fas fa-arrow-down"></i> 5%
-                            </span>
+                        <div class="card stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Total Clients</h3>
+                                <p class="stat-number">48</p>
+                                <p class="stat-change positive">+5 this month</p>
+                            </div>
                         </div>
-                        <div class="stat-card">
-                            <h3>New Users</h3>
-                            <p class="stat-number">127</p>
-                            <span class="stat-trend positive">
-                                <i class="fas fa-arrow-up"></i> 25%
-                            </span>
+                        <div class="card stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Pending Tasks</h3>
+                                <p class="stat-number">27</p>
+                                <p class="stat-change negative">+8 today</p>
+                            </div>
                         </div>
-                        <div class="stat-card">
-                            <h3>Revenue</h3>
-                            <p class="stat-number">$45,678</p>
-                            <span class="stat-trend positive">
-                                <i class="fas fa-arrow-up"></i> 18%
-                            </span>
+                        <div class="card stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Hours Logged</h3>
+                                <p class="stat-number">164</p>
+                                <p class="stat-change neutral">This month</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="dashboard-charts">
-                        <div class="chart-container">
-                            <h3>Project Status</h3>
-                            <canvas id="projectChart"></canvas>
+                    <div class="charts-grid">
+                        <div class="card chart-card">
+                            <h3>Project Progress</h3>
+                            <canvas id="projectProgressChart"></canvas>
                         </div>
-                        <div class="chart-container">
-                            <h3>Support Metrics</h3>
-                            <canvas id="supportChart"></canvas>
+                        <div class="card chart-card">
+                            <h3>Task Distribution</h3>
+                            <canvas id="taskDistributionChart"></canvas>
                         </div>
                     </div>
 
-                    <div class="recent-activity">
+                    <div class="recent-activity card">
                         <h3>Recent Activity</h3>
                         <div class="activity-list">
-                            <!-- Activity items will be dynamically added here -->
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-code-branch"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <p>New project started: <strong>E-commerce Platform</strong></p>
+                                    <span class="activity-time">2 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <p>Task completed: <strong>Database Optimization</strong></p>
+                                    <span class="activity-time">4 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <p>New client onboarded: <strong>Tech Solutions Inc.</strong></p>
+                                    <span class="activity-time">Yesterday</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Other tabs will be shown/hidden using JavaScript -->
+                </section>
             </div>
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="dashboard.js"></script>
 </body>
 </html>

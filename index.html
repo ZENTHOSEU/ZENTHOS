@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZENTHOS - Professional Code Solutions</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <!-- JWT Decode -->
@@ -17,200 +17,166 @@
     <!-- reCAPTCHA v2 -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-    <script>
-        function handleCredentialResponse(response) {
-            // Decode the credential response
-            const responsePayload = jwt_decode(response.credential);
-            
-            // Check if it's an owner email
-            if (responsePayload.email === 'spoonfullofjamie@gmail.com' || 
-                responsePayload.email === 'zybe.bouguernine@kouterkortrijk.com') {
-                // Store the user info
-                sessionStorage.setItem('user', JSON.stringify({
-                    email: responsePayload.email,
-                    name: responsePayload.name,
-                    role: 'owner',
-                    isAuthenticated: true
-                }));
-                
-                // Update UI
-                document.body.classList.add('owner-logged-in');
-                
-                // Close login modal
-                const loginModal = document.getElementById('loginModal');
-                if (loginModal) {
-                    loginModal.classList.remove('active');
-                }
-                
-                // Show welcome message
-                alert('Welcome back, Owner!');
-            } else if (responsePayload.email === 'mags_ignaex@protonmail.com') {
-                // Store staff info
-                sessionStorage.setItem('user', JSON.stringify({
-                    email: responsePayload.email,
-                    name: responsePayload.name,
-                    role: 'staff',
-                    isAuthenticated: true
-                }));
-                
-                // Update UI
-                document.body.classList.add('staff-logged-in');
-                
-                // Close login modal
-                const loginModal = document.getElementById('loginModal');
-                if (loginModal) {
-                    loginModal.classList.remove('active');
-                }
-                
-                // Show welcome message
-                alert('Welcome back, Staff Member!');
-            } else {
-                // Handle regular user login
-                sessionStorage.setItem('user', JSON.stringify({
-                    email: responsePayload.email,
-                    name: responsePayload.name,
-                    role: 'user',
-                    isAuthenticated: true
-                }));
-                
-                // Close login modal
-                const loginModal = document.getElementById('loginModal');
-                if (loginModal) {
-                    loginModal.classList.remove('active');
-                }
-            }
-        }
-
-        function checkDashboardAccess(event) {
-            event.preventDefault();
-            const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-            
-            if (!user.isAuthenticated || (user.role !== 'staff' && user.role !== 'owner')) {
-                alert('You need to be logged in as staff or owner to access the dashboard.');
-                return;
-            }
-            
-            // Store auth state specifically for dashboard
-            sessionStorage.setItem('dashboardAuth', 'true');
-            window.location.href = 'staff-dashboard.html';
-        }
-
-        // Check auth status on page load
-        window.addEventListener('load', () => {
-            const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-            if (user.isAuthenticated) {
-                if (user.role === 'owner') {
-                    document.body.classList.add('owner-logged-in');
-                } else if (user.role === 'staff') {
-                    document.body.classList.add('staff-logged-in');
-                }
-            }
-        });
-    </script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
-    <nav>
-        <a href="#home" class="logo">ZENTHOS</a>
+    <nav class="glass">
+        <a href="#home" class="logo">
+            <i class="fas fa-code"></i>
+            ZENTHOS
+        </a>
+        <div class="nav-links">
+            <a href="#services" class="btn btn-secondary">Services</a>
+            <a href="#about" class="btn btn-secondary">About</a>
+            <a href="#contact" class="btn btn-secondary">Contact</a>
+            <button id="loginBtn" class="btn btn-primary">
+                <i class="fas fa-user"></i>
+                Login
+            </button>
+        </div>
         <div class="menu-toggle">
             <i class="fas fa-bars"></i>
         </div>
-        <ul class="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#languages">Languages</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li class="staff-only" style="display: none;"><a href="#" onclick="checkDashboardAccess(event)"><i class="fas fa-user-shield"></i> Dashboard</a></li>
-            <li><a href="#" id="loginButton" class="nav-login"><i class="fas fa-user"></i> Login</a></li>
-        </ul>
     </nav>
 
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <h1>Welcome to ZENTHOS</h1>
-            <p>Your One-Stop Solution for Professional Code Development</p>
-            <p class="subtitle">We Build, Fix, and Optimize Code in Any Language</p>
-            <div class="cta-buttons">
-                <a href="project-request.html" class="cta-button">Get Started</a>
-                <a href="https://discord.gg/zv9FbG2Pq7" target="_blank" class="discord-button">
-                    <i class="fab fa-discord"></i> Join Our Community
-                </a>
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-content animate-in">
+                <h1>Elevate Your Digital Presence</h1>
+                <p>Professional code solutions tailored to your needs. We transform ideas into reality.</p>
+                <div class="hero-buttons">
+                    <a href="#contact" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i>
+                        Get Started
+                    </a>
+                    <a href="#services" class="btn btn-secondary">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="code-animation"></div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="services">
+            <h2>Our Services</h2>
+            <div class="services-grid">
+                <div class="card service-card">
+                    <i class="fas fa-laptop-code"></i>
+                    <h3>Web Development</h3>
+                    <p>Custom websites and web applications built with modern technologies.</p>
+                </div>
+                <div class="card service-card">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Mobile Apps</h3>
+                    <p>Native and cross-platform mobile applications for iOS and Android.</p>
+                </div>
+                <div class="card service-card">
+                    <i class="fas fa-server"></i>
+                    <h3>Backend Solutions</h3>
+                    <p>Scalable and secure backend infrastructure for your applications.</p>
+                </div>
+                <div class="card service-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Security</h3>
+                    <p>Advanced security implementations and penetration testing.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Languages Section -->
+        <section id="languages" class="languages">
+            <h2>Programming Languages</h2>
+            <p class="section-desc">Our expert staff covers all major programming languages and frameworks</p>
+            <div class="language-grid">
+                <div class="lang-item"><i class="fab fa-python"></i> Python</div>
+                <div class="lang-item"><i class="fab fa-js"></i> JavaScript</div>
+                <div class="lang-item"><i class="fab fa-java"></i> Java</div>
+                <div class="lang-item"><i class="fab fa-php"></i> PHP</div>
+                <div class="lang-item"><i class="fab fa-swift"></i> Swift</div>
+                <div class="lang-item"><i class="fab fa-cuttlefish"></i> C/C++</div>
+                <div class="lang-item"><i class="fab fa-rust"></i> Rust</div>
+                <div class="lang-item"><i class="fab fa-golang"></i> Go</div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact">
+            <h2>Get in Touch</h2>
+            <p class="section-desc">Let us help you with your next project</p>
+            <form id="contact-form">
+                <input type="text" placeholder="Name" required>
+                <input type="email" placeholder="Email" required>
+                <select name="service-type" required>
+                    <option value="">Select Service Type</option>
+                    <option value="development">Custom Development</option>
+                    <option value="fix">Code Fix & Debug</option>
+                    <option value="optimization">Optimization</option>
+                </select>
+                <textarea placeholder="Describe your project or issue" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about">
+            <h2>About Us</h2>
+            <p class="section-desc">We are a team of professional developers with a passion for coding</p>
+            <div class="about-grid">
+                <div class="about-item">
+                    <i class="fas fa-code"></i>
+                    <h3>Our Mission</h3>
+                    <p>To provide high-quality code solutions that meet our clients' needs</p>
+                </div>
+                <div class="about-item">
+                    <i class="fas fa-users"></i>
+                    <h3>Our Team</h3>
+                    <p>A team of experienced developers with a passion for coding</p>
+                </div>
+                <div class="about-item">
+                    <i class="fas fa-rocket"></i>
+                    <h3>Our Vision</h3>
+                    <p>To be the leading provider of code solutions in the industry</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Login Modal with Glass Effect -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-circle"></i> Login</h3>
+                <button class="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="login-options">
+                    <div id="g_id_onload"
+                        data-client_id="YOUR-CLIENT-ID"
+                        data-callback="handleCredentialResponse">
+                    </div>
+                    <div class="g_id_signin"
+                        data-type="standard"
+                        data-size="large"
+                        data-theme="outline"
+                        data-text="sign_in_with"
+                        data-shape="rectangular"
+                        data-logo_alignment="left">
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <section id="services" class="services">
-        <h2>Our Services</h2>
-        <div class="service-cards">
-            <div class="card">
-                <i class="fas fa-code"></i>
-                <h3>Custom Development</h3>
-                <p>We build your software from scratch, tailored to your specific needs</p>
-            </div>
-            <div class="card">
-                <i class="fas fa-wrench"></i>
-                <h3>Code Fix & Debug</h3>
-                <p>We diagnose and fix issues in your existing codebase</p>
-            </div>
-            <div class="card">
-                <i class="fas fa-rocket"></i>
-                <h3>Optimization</h3>
-                <p>We improve your code's performance and efficiency</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="languages" class="languages">
-        <h2>Programming Languages</h2>
-        <p class="section-desc">Our expert staff covers all major programming languages and frameworks</p>
-        <div class="language-grid">
-            <div class="lang-item"><i class="fab fa-python"></i> Python</div>
-            <div class="lang-item"><i class="fab fa-js"></i> JavaScript</div>
-            <div class="lang-item"><i class="fab fa-java"></i> Java</div>
-            <div class="lang-item"><i class="fab fa-php"></i> PHP</div>
-            <div class="lang-item"><i class="fab fa-swift"></i> Swift</div>
-            <div class="lang-item"><i class="fab fa-cuttlefish"></i> C/C++</div>
-            <div class="lang-item"><i class="fab fa-rust"></i> Rust</div>
-            <div class="lang-item"><i class="fab fa-golang"></i> Go</div>
-        </div>
-    </section>
-
-    <section id="contact" class="contact">
-        <h2>Get in Touch</h2>
-        <p class="section-desc">Let us help you with your next project</p>
-        <form id="contact-form">
-            <input type="text" placeholder="Name" required>
-            <input type="email" placeholder="Email" required>
-            <select name="service-type" required>
-                <option value="">Select Service Type</option>
-                <option value="development">Custom Development</option>
-                <option value="fix">Code Fix & Debug</option>
-                <option value="optimization">Optimization</option>
-            </select>
-            <textarea placeholder="Describe your project or issue" required></textarea>
-            <button type="submit">Send Message</button>
-        </form>
-    </section>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-brand">
-                <h3>ZENTHOS</h3>
-                <p>Professional Code Solutions</p>
-            </div>
-            <div class="footer-contact">
-                <p>Support: mags_ignaex@protonmail.com</p>
-                <a href="https://discord.gg/zv9FbG2Pq7" target="_blank" class="footer-discord">
-                    <i class="fab fa-discord"></i> Join Our Discord Server
-                </a>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 ZENTHOS. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- Live Chat Widget -->
-    <div id="live-chat-widget" class="live-chat-widget">
+    <!-- Live Chat Widget with Glass Effect -->
+    <div id="live-chat-widget" class="live-chat-widget glass">
         <div class="chat-header">
             <h3><i class="fas fa-comments"></i> Live Support</h3>
             <button id="toggle-chat" class="toggle-chat">
@@ -218,121 +184,16 @@
             </button>
         </div>
         <div class="chat-body">
-            <div id="chat-messages" class="chat-messages">
-                <div class="message system">
-                    Welcome to ZENTHOS Support! Please wait while we connect you with a support agent.
-                </div>
-            </div>
+            <div class="chat-messages" id="chatMessages"></div>
             <div class="chat-input">
-                <input type="text" id="chat-input" placeholder="Type your message...">
-                <button id="send-message">
+                <input type="text" id="messageInput" placeholder="Type your message...">
+                <button id="sendMessage" class="btn btn-primary">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="auth-container">
-            <div class="auth-box">
-                <div class="modal-header">
-                    <h2>Login to ZENTHOS</h2>
-                    <button class="close-modal">&times;</button>
-                </div>
-                <div class="auth-tabs">
-                    <button class="auth-tab active" data-tab="user">User Login</button>
-                    <button class="auth-tab" data-tab="staff">Staff Login</button>
-                </div>
-                
-                <form id="loginForm" class="auth-form">
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <div class="password-input">
-                            <input type="password" id="password" required>
-                            <button type="button" class="toggle-password">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="remember">
-                            Remember me
-                        </label>
-                        <a href="#" class="forgot-password">Forgot Password?</a>
-                    </div>
-
-                    <!-- Add reCAPTCHA -->
-                    <div class="form-group">
-                        <div class="g-recaptcha" data-sitekey="6LdkTgIrAAAAADoXsKLDqAAT_efR6kzf2pTiV0LP" data-theme="light"></div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Login</button>
-
-                    <!-- Google Sign-In -->
-                    <div class="social-login">
-                        <p>Or sign in with:</p>
-                        <div id="g_id_onload"
-                             data-client_id="511304996179-c4tgbi0fo4do34rkeqj4r6s21hh6co3t.apps.googleusercontent.com"
-                             data-context="signin"
-                             data-ux_mode="popup"
-                             data-callback="handleCredentialResponse"
-                             data-auto_prompt="false">
-                        </div>
-                        <div class="g_id_signin"
-                             data-type="standard"
-                             data-shape="rectangular"
-                             data-theme="filled_blue"
-                             data-text="signin_with"
-                             data-size="large"
-                             data-width="250"
-                             data-logo_alignment="left">
-                        </div>
-                    </div>
-
-                    <!-- Add 2FA Setup Button -->
-                    <div class="two-factor-setup">
-                        <button type="button" id="setup2FA" class="btn btn-secondary">
-                            <i class="fas fa-shield-alt"></i> Enable Two-Factor Authentication
-                        </button>
-                    </div>
-                </form>
-
-                <div class="auth-footer">
-                    <p>Don't have an account? <a href="#" id="registerLink">Register</a></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 2FA Verification Modal -->
-    <div id="twoFactorVerifyModal" class="modal">
-        <div class="modal-content">
-            <h3>Two-Factor Authentication</h3>
-            <p>Enter the 6-digit code from your authenticator app:</p>
-            <input type="text" id="twoFactorCode" maxlength="6" placeholder="Enter code">
-            <div class="modal-buttons">
-                <button onclick="securityManager.verify2FALogin()" class="btn btn-primary">Verify</button>
-                <button onclick="this.parentElement.parentElement.parentElement.style.display='none'" class="btn btn-secondary">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Load required libraries -->
-    <script src="node_modules/qrcode/build/qrcode.min.js"></script>
-    <script src="node_modules/speakeasy/index.js"></script>
-    
-    <!-- Load our scripts -->
-    <script src="security.js"></script>
-    <script src="auth.js"></script>
     <script src="script.js"></script>
-    <script src="chat.js"></script>
 </body>
 </html>

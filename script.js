@@ -162,6 +162,245 @@ class ChatSupport {
 // Initialize chat support
 const chatSupport = new ChatSupport();
 
+// Authentication handling
+function handleCredentialResponse(response) {
+    const responsePayload = jwt_decode(response.credential);
+    
+    // Check if it's an owner email
+    if (responsePayload.email === 'spoonfullofjamie@gmail.com' || 
+        responsePayload.email === 'zybe.bouguernine@kouterkortrijk.com') {
+        handleLogin(responsePayload, 'owner');
+    } else if (responsePayload.email === 'mags_ignaex@protonmail.com') {
+        handleLogin(responsePayload, 'staff');
+    } else {
+        handleLogin(responsePayload, 'user');
+    }
+}
+
+function handleLogin(payload, role) {
+    // Store user info
+    sessionStorage.setItem('user', JSON.stringify({
+        email: payload.email,
+        name: payload.name,
+        role: role,
+        isAuthenticated: true
+    }));
+    
+    // Update UI
+    document.body.classList.add(`${role}-logged-in`);
+    
+    // Close login modal with animation
+    const loginModal = document.getElementById('loginModal');
+    if (loginModal) {
+        gsap.to(loginModal, {
+            duration: 0.5,
+            opacity: 0,
+            scale: 0.9,
+            onComplete: () => {
+                loginModal.classList.remove('active');
+                loginModal.style.opacity = 1;
+                loginModal.style.transform = 'none';
+            }
+        });
+    }
+    
+    // Show welcome message
+    showNotification(`Welcome back, ${role.charAt(0).toUpperCase() + role.slice(1)}!`);
+}
+
+// Modern notification system
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        <p>${message}</p>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    gsap.fromTo(notification,
+        {
+            x: 50,
+            opacity: 0
+        },
+        {
+            duration: 0.5,
+            x: 0,
+            opacity: 1,
+            ease: 'power2.out'
+        }
+    );
+    
+    setTimeout(() => {
+        gsap.to(notification, {
+            duration: 0.5,
+            x: 50,
+            opacity: 0,
+            ease: 'power2.in',
+            onComplete: () => notification.remove()
+        });
+    }, 3000);
+}
+
+// Initialize animations
+document.addEventListener('DOMContentLoaded', () => {
+    // Hero section animations
+    gsap.from('.hero-content h1', {
+        duration: 1,
+        y: 50,
+        opacity: 0,
+        ease: 'power3.out'
+    });
+    
+    gsap.from('.hero-content p', {
+        duration: 1,
+        y: 30,
+        opacity: 0,
+        delay: 0.3,
+        ease: 'power3.out'
+    });
+    
+    gsap.from('.hero-buttons', {
+        duration: 1,
+        y: 30,
+        opacity: 0,
+        delay: 0.6,
+        ease: 'power3.out'
+    });
+
+    // Services section animations
+    const serviceCards = gsap.utils.toArray('.service-card');
+    serviceCards.forEach((card, i) => {
+        gsap.from(card, {
+            scrollTrigger: {
+                trigger: card,
+                start: 'top bottom-=100',
+                toggleActions: 'play none none reverse'
+            },
+            duration: 0.8,
+            y: 50,
+            opacity: 0,
+            delay: i * 0.2,
+            ease: 'power2.out'
+        });
+    });
+});
+
+// Modal handling
+const loginBtn = document.getElementById('loginBtn');
+const loginModal = document.getElementById('loginModal');
+const closeModal = document.querySelector('.close-modal');
+
+loginBtn?.addEventListener('click', () => {
+    loginModal.classList.add('active');
+    gsap.from('.modal-content', {
+        duration: 0.5,
+        scale: 0.8,
+        opacity: 0,
+        ease: 'back.out(1.7)'
+    });
+});
+
+closeModal?.addEventListener('click', () => {
+    gsap.to('.modal-content', {
+        duration: 0.5,
+        scale: 0.8,
+        opacity: 0,
+        ease: 'power2.in',
+        onComplete: () => {
+            loginModal.classList.remove('active');
+            gsap.set('.modal-content', { clearProps: 'all' });
+        }
+    });
+});
+
+// Live chat widget
+const chatWidget = document.getElementById('live-chat-widget');
+const toggleChat = document.getElementById('toggle-chat');
+const chatMessages = document.getElementById('chatMessages');
+const messageInput = document.getElementById('messageInput');
+const sendMessage = document.getElementById('sendMessage');
+
+let isChatOpen = true;
+
+toggleChat?.addEventListener('click', () => {
+    const chatBody = chatWidget.querySelector('.chat-body');
+    const icon = toggleChat.querySelector('i');
+    
+    if (isChatOpen) {
+        gsap.to(chatBody, {
+            duration: 0.5,
+            height: 0,
+            opacity: 0,
+            ease: 'power2.inOut'
+        });
+        icon.className = 'fas fa-plus';
+    } else {
+        gsap.to(chatBody, {
+            duration: 0.5,
+            height: 'auto',
+            opacity: 1,
+            ease: 'power2.inOut'
+        });
+        icon.className = 'fas fa-minus';
+    }
+    
+    isChatOpen = !isChatOpen;
+});
+
+// Send chat message
+function sendChatMessage(message, isUser = true) {
+    const messageElement = document.createElement('div');
+    messageElement.className = `chat-message ${isUser ? 'user' : 'support'}`;
+    messageElement.innerHTML = `
+        <div class="message-content">
+            <p>${message}</p>
+            <span class="message-time">${new Date().toLocaleTimeString()}</span>
+        </div>
+    `;
+    
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    gsap.from(messageElement, {
+        duration: 0.5,
+        y: 20,
+        opacity: 0,
+        ease: 'power2.out'
+    });
+}
+
+// Handle message input
+messageInput?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        const message = messageInput.value.trim();
+        if (message) {
+            sendChatMessage(message);
+            messageInput.value = '';
+            
+            // Simulate support response
+            setTimeout(() => {
+                sendChatMessage('Thank you for your message. A support agent will respond shortly.', false);
+            }, 1000);
+        }
+    }
+});
+
+sendMessage?.addEventListener('click', () => {
+    const message = messageInput.value.trim();
+    if (message) {
+        sendChatMessage(message);
+        messageInput.value = '';
+        
+        // Simulate support response
+        setTimeout(() => {
+            sendChatMessage('Thank you for your message. A support agent will respond shortly.', false);
+        }, 1000);
+    }
+});
+
 // Modal functionality
 document.addEventListener('DOMContentLoaded', function() {
     const loginButton = document.getElementById('loginButton');
@@ -202,4 +441,22 @@ document.addEventListener('DOMContentLoaded', function() {
     menuToggle.addEventListener('click', function() {
         navLinks.classList.toggle('active');
     });
+});
+
+// Responsive navigation
+const menuToggle = document.querySelector('.menu-toggle');
+const navLinks = document.querySelector('.nav-links');
+
+menuToggle?.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+    
+    if (navLinks.classList.contains('active')) {
+        gsap.from('.nav-links a', {
+            duration: 0.5,
+            opacity: 0,
+            y: 20,
+            stagger: 0.1,
+            ease: 'power2.out'
+        });
+    }
 });
