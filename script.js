@@ -164,59 +164,91 @@ const chatSupport = new ChatSupport();
 
 // Authentication handling
 function handleCredentialResponse(response) {
-    const responsePayload = jwt_decode(response.credential);
-    
-    // Check if it's an owner email
-    if (responsePayload.email === 'spoonfullofjamie@gmail.com' || 
-        responsePayload.email === 'zybe.bouguernine@kouterkortrijk.com') {
-        handleLogin(responsePayload, 'owner');
-    } else if (responsePayload.email === 'mags_ignaex@protonmail.com') {
-        handleLogin(responsePayload, 'staff');
-    } else {
-        handleLogin(responsePayload, 'user');
+    try {
+        const responsePayload = jwt_decode(response.credential);
+        console.log("Email:", responsePayload.email);
+        
+        // Check if it's an owner or staff email
+        if (responsePayload.email === 'spoonfullofjamie@gmail.com' || 
+            responsePayload.email === 'zybe.bouguernine@kouterkortrijk.com') {
+            handleLogin(responsePayload, 'owner');
+        } else if (responsePayload.email === 'mags_ignaex@protonmail.com') {
+            handleLogin(responsePayload, 'staff');
+        } else {
+            handleLogin(responsePayload, 'user');
+        }
+    } catch (error) {
+        console.error('Authentication error:', error);
+        showError('Authentication failed. Please try again.');
     }
 }
 
 function handleLogin(payload, role) {
-    // Store user info
-    sessionStorage.setItem('user', JSON.stringify({
-        email: payload.email,
-        name: payload.name,
-        role: role,
-        isAuthenticated: true
-    }));
-    
-    // Update UI
-    document.body.classList.add(`${role}-logged-in`);
-    
-    // Close login modal with animation
-    const loginModal = document.getElementById('loginModal');
-    if (loginModal) {
-        gsap.to(loginModal, {
-            duration: 0.5,
-            opacity: 0,
-            scale: 0.9,
-            onComplete: () => {
-                loginModal.classList.remove('active');
-                loginModal.style.opacity = 1;
-                loginModal.style.transform = 'none';
-                
-                // Redirect to dashboard for staff and owner roles
-                if (role === 'staff' || role === 'owner') {
-                    window.location.href = 'staff-dashboard.html';
-                }
-            }
-        });
-    } else {
-        // If no modal (e.g., on other pages), redirect immediately for staff and owner
-        if (role === 'staff' || role === 'owner') {
+    try {
+        // Store user info
+        const userData = {
+            email: payload.email,
+            name: payload.name,
+            role: role,
+            isAuthenticated: true
+        };
+        sessionStorage.setItem('user', JSON.stringify(userData));
+        
+        // Redirect based on role
+        if (role === 'owner' || role === 'staff') {
             window.location.href = 'staff-dashboard.html';
+        } else {
+            window.location.href = 'index.html';
         }
+    } catch (error) {
+        console.error('Login error:', error);
+        showError('Failed to log in. Please try again.');
     }
-    
-    // Show welcome message
-    showNotification(`Welcome back, ${role.charAt(0).toUpperCase() + role.slice(1)}!`);
 }
+
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    document.body.appendChild(errorDiv);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        errorDiv.remove();
+    }, 5000);
+}
+
+// Check authentication on page load
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+        
+        // If on dashboard page
+        if (window.location.pathname.includes('staff-dashboard.html')) {
+            if (!user.isAuthenticated || (user.role !== 'staff' && user.role !== 'owner')) {
+                // Show unauthorized message
+                const unauthorizedMessage = document.getElementById('unauthorizedMessage');
+                if (unauthorizedMessage) {
+                    unauthorizedMessage.style.display = 'flex';
+                }
+                document.querySelector('.dashboard-container').style.display = 'none';
+            } else {
+                // Show dashboard
+                document.querySelector('.dashboard-container').style.display = 'flex';
+                document.querySelector('.dashboard-body').classList.add('loaded');
+            }
+        }
+        
+        // Update UI elements
+        const staffNameElements = document.querySelectorAll('#staffName');
+        staffNameElements.forEach(el => {
+            if (el) el.textContent = user.name || 'Guest';
+        });
+    } catch (error) {
+        console.error('Authentication check error:', error);
+        showError('Failed to verify authentication. Please try logging in again.');
+    }
+});
 
 // Modern notification system
 function showNotification(message, type = 'success') {

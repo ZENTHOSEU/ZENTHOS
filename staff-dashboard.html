@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="auth.js"></script>
     <style>
         .dashboard-body {
             opacity: 0;
@@ -49,65 +48,7 @@
             border-radius: 8px;
             transition: all 0.3s ease;
         }
-        #unauthorizedMessage a:hover {
-            background: white;
-            color: #6200EA;
-        }
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #6200EA;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-        .loading-screen .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .dashboard-container {
-            display: none;
-        }
-        .dashboard-container.loaded {
-            display: flex;
-        }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize auth
-            const auth = new Auth();
-            
-            // Get user data
-            const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-            
-            // Update staff name
-            document.getElementById('staffName').textContent = user.name;
-
-            // Show admin controls for owner
-            if (user.role === 'owner') {
-                document.querySelectorAll('.admin-only').forEach(el => {
-                    el.style.display = 'block';
-                });
-            }
-
-            // Handle logout
-            document.getElementById('logoutBtn').addEventListener('click', (e) => {
-                e.preventDefault();
-                Auth.logout();
-            });
-        });
-    </script>
 </head>
 <body class="dashboard-body">
     <!-- Unauthorized Message -->
@@ -117,52 +58,57 @@
         <a href="index.html">Return to Home</a>
     </div>
 
+    <!-- Google Sign-In button -->
+    <div id="g_id_onload"
+         data-client_id="511304996179-c4tgbi0fo4do34rkeqj4r6s21hh6co3t.apps.googleusercontent.com"
+         data-context="signin"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin"
+         data-type="standard"
+         data-size="large"
+         data-theme="outline"
+         data-text="sign_in_with"
+         data-shape="rectangular"
+         data-logo_alignment="left">
+    </div>
+
     <div class="dashboard-container">
         <aside class="dashboard-sidebar glass">
             <div class="sidebar-header">
                 <a href="index.html" class="logo">
                     <i class="fas fa-code"></i>
-                    ZENTHOS
+                    <span>ZENTHOS</span>
                 </a>
-                <p class="staff-name">Welcome, <span id="staffName">Staff</span></p>
             </div>
-            
             <nav class="sidebar-nav">
                 <a href="#overview" class="nav-item active">
                     <i class="fas fa-chart-line"></i>
-                    Overview
+                    <span>Overview</span>
                 </a>
                 <a href="#projects" class="nav-item">
                     <i class="fas fa-project-diagram"></i>
-                    Projects
-                </a>
-                <a href="#clients" class="nav-item">
-                    <i class="fas fa-users"></i>
-                    Clients
+                    <span>Projects</span>
                 </a>
                 <a href="#tasks" class="nav-item">
                     <i class="fas fa-tasks"></i>
-                    Tasks
+                    <span>Tasks</span>
                 </a>
-                <a href="#messages" class="nav-item">
-                    <i class="fas fa-envelope"></i>
-                    Messages
+                <a href="#clients" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Clients</span>
                 </a>
                 <a href="#settings" class="nav-item">
                     <i class="fas fa-cog"></i>
-                    Settings
+                    <span>Settings</span>
                 </a>
-                <div class="nav-links">
-                    <a href="index.html" class="btn btn-secondary">Home</a>
-                    <a href="settings.html" class="btn btn-secondary">Settings</a>
-                    <button id="logoutBtn" class="btn btn-primary">
-                        <i class="fas fa-sign-out-alt"></i>
-                        Logout
-                    </button>
-                </div>
             </nav>
-
             <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
             </div>
         </aside>
 
@@ -172,17 +118,10 @@
                     <i class="fas fa-search"></i>
                     <input type="text" placeholder="Search projects, clients, or tasks...">
                 </div>
-                <div class="header-actions">
-                    <button class="btn btn-secondary">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </button>
-                    <button class="btn btn-secondary">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                    <div class="user-profile">
-                        <img src="https://ui-avatars.com/api/?name=Staff&background=6200EA&color=fff" alt="Profile" class="profile-image">
-                        <span class="profile-name" id="profileName">Staff</span>
+                <div class="header-profile">
+                    <span id="staffName">Loading...</span>
+                    <div class="profile-image">
+                        <i class="fas fa-user"></i>
                     </div>
                 </div>
             </header>
@@ -197,18 +136,8 @@
                             </div>
                             <div class="stat-info">
                                 <h3>Active Projects</h3>
-                                <p class="stat-number">12</p>
-                                <p class="stat-change positive">+2 this week</p>
-                            </div>
-                        </div>
-                        <div class="card stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="stat-info">
-                                <h3>Total Clients</h3>
-                                <p class="stat-number">48</p>
-                                <p class="stat-change positive">+5 this month</p>
+                                <p class="stat-value">12</p>
+                                <p class="stat-change positive">+3 this month</p>
                             </div>
                         </div>
                         <div class="card stat-card">
@@ -217,18 +146,18 @@
                             </div>
                             <div class="stat-info">
                                 <h3>Pending Tasks</h3>
-                                <p class="stat-number">27</p>
-                                <p class="stat-change negative">+8 today</p>
+                                <p class="stat-value">28</p>
+                                <p class="stat-change negative">5 overdue</p>
                             </div>
                         </div>
                         <div class="card stat-card">
                             <div class="stat-icon">
-                                <i class="fas fa-clock"></i>
+                                <i class="fas fa-users"></i>
                             </div>
                             <div class="stat-info">
-                                <h3>Hours Logged</h3>
-                                <p class="stat-number">164</p>
-                                <p class="stat-change neutral">This month</p>
+                                <h3>Active Clients</h3>
+                                <p class="stat-value">18</p>
+                                <p class="stat-change positive">+2 this month</p>
                             </div>
                         </div>
                     </div>
@@ -244,34 +173,34 @@
                         </div>
                     </div>
 
-                    <div class="recent-activity card">
+                    <div class="card activity-card">
                         <h3>Recent Activity</h3>
                         <div class="activity-list">
                             <div class="activity-item">
                                 <div class="activity-icon">
-                                    <i class="fas fa-code-branch"></i>
-                                </div>
-                                <div class="activity-details">
-                                    <p>New project started: <strong>E-commerce Platform</strong></p>
-                                    <span class="activity-time">2 hours ago</span>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon">
                                     <i class="fas fa-check-circle"></i>
                                 </div>
-                                <div class="activity-details">
-                                    <p>Task completed: <strong>Database Optimization</strong></p>
-                                    <span class="activity-time">4 hours ago</span>
+                                <div class="activity-info">
+                                    <p class="activity-text">Project "Website Redesign" completed</p>
+                                    <p class="activity-time">2 hours ago</p>
                                 </div>
                             </div>
                             <div class="activity-item">
                                 <div class="activity-icon">
                                     <i class="fas fa-user-plus"></i>
                                 </div>
-                                <div class="activity-details">
-                                    <p>New client onboarded: <strong>Tech Solutions Inc.</strong></p>
-                                    <span class="activity-time">Yesterday</span>
+                                <div class="activity-info">
+                                    <p class="activity-text">New client "Tech Solutions Inc." added</p>
+                                    <p class="activity-time">5 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-tasks"></i>
+                                </div>
+                                <div class="activity-info">
+                                    <p class="activity-text">10 tasks completed in "Mobile App Development"</p>
+                                    <p class="activity-time">Yesterday</p>
                                 </div>
                             </div>
                         </div>
@@ -282,25 +211,11 @@
     </div>
 
     <!-- Load scripts in correct order -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://accounts.google.com/gsi/client" async></script>
     <script src="https://unpkg.com/jwt-decode@3.1.2/build/jwt-decode.js"></script>
-    <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="script.js"></script>
     <script src="dashboard.js"></script>
-
-    <!-- Add Google Sign-In button -->
-    <div id="g_id_onload"
-         data-client_id="511304996179-c4tgbi0fo4do34rkeqj4r6s21hh6co3t.apps.googleusercontent.com"
-         data-callback="handleCredentialResponse">
-    </div>
-    <div class="g_id_signin"
-         data-type="standard"
-         data-size="large"
-         data-theme="outline"
-         data-text="sign_in_with"
-         data-shape="rectangular"
-         data-logo_alignment="left">
-    </div>
 </body>
 </html>
