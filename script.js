@@ -200,8 +200,18 @@ function handleLogin(payload, role) {
                 loginModal.classList.remove('active');
                 loginModal.style.opacity = 1;
                 loginModal.style.transform = 'none';
+                
+                // Redirect to dashboard for staff and owner roles
+                if (role === 'staff' || role === 'owner') {
+                    window.location.href = 'staff-dashboard.html';
+                }
             }
         });
+    } else {
+        // If no modal (e.g., on other pages), redirect immediately for staff and owner
+        if (role === 'staff' || role === 'owner') {
+            window.location.href = 'staff-dashboard.html';
+        }
     }
     
     // Show welcome message
