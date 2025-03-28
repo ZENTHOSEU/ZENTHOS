@@ -83,43 +83,41 @@
         }
     </style>
     <script>
-        // Immediate auth check
-        (function() {
-            const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-            if (!user.isAuthenticated || (user.role !== 'staff' && user.role !== 'owner')) {
-                // Show unauthorized message and redirect after delay
-                window.onload = () => {
-                    document.getElementById('unauthorizedMessage').style.display = 'flex';
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 2000); // 2 second delay before redirect
-                };
-                return;
+        // Check for specific dashboard auth
+        if (!sessionStorage.getItem('dashboardAuth')) {
+            window.location.href = 'index.html';
+        }
+
+        // Remove the auth flag immediately to prevent direct access
+        sessionStorage.removeItem('dashboardAuth');
+
+        // Get user data
+        const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+        
+        // Double check user is still authenticated
+        if (!user.isAuthenticated || (user.role !== 'staff' && user.role !== 'owner')) {
+            window.location.href = 'index.html';
+        }
+
+        // Initialize dashboard when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update staff name
+            document.getElementById('staffName').textContent = user.name;
+
+            // Show admin controls for owner
+            if (user.role === 'owner') {
+                document.querySelectorAll('.admin-only').forEach(el => {
+                    el.style.display = 'block';
+                });
             }
 
-            // If authorized, show page when loaded
-            window.onload = () => {
-                // Update staff name
-                document.getElementById('staffName').textContent = user.name;
-
-                // Show admin controls for owner
-                if (user.role === 'owner') {
-                    document.querySelectorAll('.admin-only').forEach(el => {
-                        el.style.display = 'block';
-                    });
-                }
-
-                // Show the dashboard
-                document.body.classList.add('loaded');
-
-                // Handle logout
-                document.getElementById('logoutBtn').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    sessionStorage.removeItem('user');
-                    window.location.href = 'index.html';
-                });
-            };
-        })();
+            // Handle logout
+            document.getElementById('logoutBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                sessionStorage.removeItem('user');
+                window.location.href = 'index.html';
+            });
+        });
     </script>
 </head>
 <body class="dashboard-body">

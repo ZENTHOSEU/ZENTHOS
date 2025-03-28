@@ -81,6 +81,20 @@
             }
         }
 
+        function checkDashboardAccess(event) {
+            event.preventDefault();
+            const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+            
+            if (!user.isAuthenticated || (user.role !== 'staff' && user.role !== 'owner')) {
+                alert('You need to be logged in as staff or owner to access the dashboard.');
+                return;
+            }
+            
+            // Store auth state specifically for dashboard
+            sessionStorage.setItem('dashboardAuth', 'true');
+            window.location.href = 'staff-dashboard.html';
+        }
+
         // Check auth status on page load
         window.addEventListener('load', () => {
             const user = JSON.parse(sessionStorage.getItem('user') || '{}');
@@ -105,7 +119,7 @@
             <li><a href="#services">Services</a></li>
             <li><a href="#languages">Languages</a></li>
             <li><a href="#contact">Contact</a></li>
-            <li class="staff-only" style="display: none;"><a href="staff-dashboard.html"><i class="fas fa-user-shield"></i> Dashboard</a></li>
+            <li class="staff-only" style="display: none;"><a href="#" onclick="checkDashboardAccess(event)"><i class="fas fa-user-shield"></i> Dashboard</a></li>
             <li><a href="#" id="loginButton" class="nav-login"><i class="fas fa-user"></i> Login</a></li>
         </ul>
     </nav>
