@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZENTHOS - Staff Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-container">
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <h2>ZENTHOS</h2>
+                <p class="staff-name">Welcome, <span id="staffName">Staff</span></p>
+            </div>
+            
+            <nav class="dashboard-nav">
+                <a href="#" class="nav-item active" data-tab="overview">
+                    <i class="fas fa-home"></i> Overview
+                </a>
+                <a href="#" class="nav-item" data-tab="projects">
+                    <i class="fas fa-project-diagram"></i> Projects
+                </a>
+                <a href="#" class="nav-item" data-tab="users">
+                    <i class="fas fa-users"></i> Users
+                </a>
+                <a href="#" class="nav-item" data-tab="support">
+                    <i class="fas fa-headset"></i> Support
+                </a>
+                <a href="#" class="nav-item" data-tab="analytics">
+                    <i class="fas fa-chart-bar"></i> Analytics
+                </a>
+                <div class="admin-only" style="display: none;">
+                    <a href="#" class="nav-item" data-tab="staff">
+                        <i class="fas fa-user-shield"></i> Manage Staff
+                    </a>
+                    <a href="#" class="nav-item" data-tab="settings">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" id="logoutBtn" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <div class="header-search">
+                    <input type="text" placeholder="Search...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="header-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="staff-profile">
+                        <img src="https://via.placeholder.com/40" alt="Staff Profile" class="profile-img">
+                        <div class="profile-info">
+                            <span id="staffNameHeader">Staff Name</span>
+                            <span id="staffRole" class="staff-role">Support Staff</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Overview Tab -->
+                <div class="dashboard-tab active" id="overview">
+                    <div class="dashboard-stats">
+                        <div class="stat-card">
+                            <h3>Active Projects</h3>
+                            <p class="stat-number">24</p>
+                            <span class="stat-trend positive">
+                                <i class="fas fa-arrow-up"></i> 12%
+                            </span>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Support Tickets</h3>
+                            <p class="stat-number">15</p>
+                            <span class="stat-trend negative">
+                                <i class="fas fa-arrow-down"></i> 5%
+                            </span>
+                        </div>
+                        <div class="stat-card">
+                            <h3>New Users</h3>
+                            <p class="stat-number">127</p>
+                            <span class="stat-trend positive">
+                                <i class="fas fa-arrow-up"></i> 25%
+                            </span>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Revenue</h3>
+                            <p class="stat-number">$45,678</p>
+                            <span class="stat-trend positive">
+                                <i class="fas fa-arrow-up"></i> 18%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-charts">
+                        <div class="chart-container">
+                            <h3>Project Status</h3>
+                            <canvas id="projectChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Support Metrics</h3>
+                            <canvas id="supportChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="recent-activity">
+                        <h3>Recent Activity</h3>
+                        <div class="activity-list">
+                            <!-- Activity items will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other tabs will be shown/hidden using JavaScript -->
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

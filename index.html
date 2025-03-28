@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZENTHOS - Professional Code Solutions</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="logo">ZENTHOS</div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#languages">Languages</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Welcome to ZENTHOS</h1>
+            <p>Your One-Stop Solution for Professional Code Development</p>
+            <p class="subtitle">We Build, Fix, and Optimize Code in Any Language</p>
+            <div class="cta-buttons">
+                <a href="project-request.html" class="cta-button">Get Started</a>
+                <a href="https://discord.gg/zv9FbG2Pq7" target="_blank" class="discord-button">
+                    <i class="fab fa-discord"></i> Join Our Community
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="services">
+        <h2>Our Services</h2>
+        <div class="service-cards">
+            <div class="card">
+                <i class="fas fa-code"></i>
+                <h3>Custom Development</h3>
+                <p>We build your software from scratch, tailored to your specific needs</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-wrench"></i>
+                <h3>Code Fix & Debug</h3>
+                <p>We diagnose and fix issues in your existing codebase</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-rocket"></i>
+                <h3>Optimization</h3>
+                <p>We improve your code's performance and efficiency</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="languages" class="languages">
+        <h2>Programming Languages</h2>
+        <p class="section-desc">Our expert staff covers all major programming languages and frameworks</p>
+        <div class="language-grid">
+            <div class="lang-item"><i class="fab fa-python"></i> Python</div>
+            <div class="lang-item"><i class="fab fa-js"></i> JavaScript</div>
+            <div class="lang-item"><i class="fab fa-java"></i> Java</div>
+            <div class="lang-item"><i class="fab fa-php"></i> PHP</div>
+            <div class="lang-item"><i class="fab fa-swift"></i> Swift</div>
+            <div class="lang-item"><i class="fab fa-cuttlefish"></i> C/C++</div>
+            <div class="lang-item"><i class="fab fa-rust"></i> Rust</div>
+            <div class="lang-item"><i class="fab fa-golang"></i> Go</div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <h2>Get in Touch</h2>
+        <p class="section-desc">Let us help you with your next project</p>
+        <form id="contact-form">
+            <input type="text" placeholder="Name" required>
+            <input type="email" placeholder="Email" required>
+            <select name="service-type" required>
+                <option value="">Select Service Type</option>
+                <option value="development">Custom Development</option>
+                <option value="fix">Code Fix & Debug</option>
+                <option value="optimization">Optimization</option>
+            </select>
+            <textarea placeholder="Describe your project or issue" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>ZENTHOS</h3>
+                <p>Professional Code Solutions</p>
+            </div>
+            <div class="footer-contact">
+                <p>Support: mags_ignaex@protonmail.com</p>
+                <a href="https://discord.gg/zv9FbG2Pq7" target="_blank" class="footer-discord">
+                    <i class="fab fa-discord"></i> Join Our Discord Server
+                </a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ZENTHOS. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Live Chat Widget -->
+    <div id="live-chat-widget" class="live-chat-widget">
+        <div class="chat-header">
+            <h3><i class="fas fa-comments"></i> Live Support</h3>
+            <button id="toggle-chat" class="toggle-chat">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+        <div class="chat-body">
+            <div id="chat-messages" class="chat-messages">
+                <div class="message system">
+                    Welcome to ZENTHOS Support! Please wait while we connect you with a support agent.
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Type your message...">
+                <button id="send-message">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="chat.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
