@@ -14,8 +14,17 @@ const userDB = {
     staff: [
         {
             id: 'admin',
+            email: 'spoonfullofjamie@gmail.com',
+            role: 'owner',
+            name: 'Owner',
+            twoFactorEnabled: false,
+            twoFactorSecret: null,
+            isGoogleAuth: true
+        },
+        {
+            id: 'staff',
             email: 'mags_ignaex@protonmail.com',
-            passwordHash: '7c8645c350c69937a127273c3825fc010615f0e918f1c332c3883a7f8f827061', // Pre-hashed password
+            passwordHash: '7c8645c350c69937a127273c3825fc010615f0e918f1c332c3883a7f8f827061',
             role: 'admin',
             name: 'Administrator',
             twoFactorEnabled: false,
@@ -47,6 +56,68 @@ const rateLimiter = {
         this.attempts[ip].push(Date.now());
     }
 };
+
+// Google Sign-In handler
+function handleGoogleSignIn(response) {
+    const credential = response.credential;
+    const profile = jwt_decode(credential);
+    
+    // Handle the signed-in user info
+    if (profile) {
+        const email = profile.email;
+        const name = profile.name;
+        
+        // Check if it's the owner's email
+        const isOwner = email === 'spoonfullofjamie@gmail.com';
+        
+        if (isOwner) {
+            // Set up owner session
+            sessionStorage.setItem('user', JSON.stringify({
+                email,
+                name,
+                role: 'owner',
+                isAuthenticated: true
+            }));
+            
+            // Redirect to admin dashboard or show owner controls
+            document.body.classList.add('owner-logged-in');
+            console.log('Owner logged in successfully');
+            
+            // Show success message
+            alert('Welcome back, Owner!');
+            
+            // Close the login modal if it's open
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) {
+                loginModal.classList.remove('active');
+            }
+        } else {
+            // Regular user login
+            sessionStorage.setItem('user', JSON.stringify({
+                email,
+                name,
+                role: 'user',
+                isAuthenticated: true
+            }));
+            console.log('User logged in with Google:', email);
+        }
+    } else {
+        console.error('Failed to get user profile from Google Sign-In');
+        alert('Login failed. Please try again.');
+    }
+}
+
+// Handle Google Sign-In errors
+function handleGoogleSignInError(error) {
+    console.error('Google Sign-In failed:', error);
+    alert('Google Sign-In failed. Please try again.');
+}
+
+// Check if user is owner
+function isOwner() {
+    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+    return user.email === 'spoonfullofjamie@gmail.com' && user.isAuthenticated;
+}
 
 // Authentication handler
 class Auth {
@@ -86,44 +157,36 @@ class Auth {
                     
                     // Check credentials
                     const db = isStaff ? userDB.staff : userDB.users;
-                    const user = db.find(u => u.email === email && u.passwordHash === passwordHash);
+                    const user = db.find(u => u.email === email && (u.isGoogleAuth || u.passwordHash === passwordHash));
                     
                     if (!user) {
                         throw new Error('Invalid email or password');
                     }
                     
-                    // Record login attempt
-                    rateLimiter.recordAttempt(userIP);
-                    
-                    // Check if 2FA is enabled
-                    if (user.twoFactorEnabled) {
-                        // Store user data temporarily
-                        sessionStorage.setItem('pendingUser', JSON.stringify({
-                            id: user.id,
-                            email: user.email,
-                            role: user.role,
-                            name: user.name,
-                            twoFactorSecret: user.twoFactorSecret
-                        }));
-                        
-                        // Show 2FA verification modal
-                        document.getElementById('twoFactorVerifyModal').style.display = 'block';
-                    } else {
-                        // Login successful
-                        sessionStorage.setItem('currentUser', JSON.stringify({
-                            id: user.id,
-                            email: user.email,
-                            role: user.role,
-                            name: user.name
-                        }));
-                        
-                        // Redirect based on role
-                        window.location.href = user.role === 'admin' ? 'admin-dashboard.html' : 'dashboard.html';
+                    // Set up session
+                    sessionStorage.setItem('user', JSON.stringify({
+                        email: user.email,
+                        role: user.role,
+                        name: user.name,
+                        isAuthenticated: true
+                    }));
+
+                    // Update UI based on role
+                    if (user.role === 'owner') {
+                        document.body.classList.add('owner-logged-in');
                     }
+
+                    // Close login modal
+                    const loginModal = document.getElementById('loginModal');
+                    if (loginModal) {
+                        loginModal.classList.remove('active');
+                    }
+
+                    console.log('Login successful');
                 } catch (error) {
+                    console.error('Login failed:', error);
                     alert(error.message);
-                    // Reset reCAPTCHA on error
-                    grecaptcha.reset();
+                    rateLimiter.recordAttempt(userIP);
                 }
             });
         }
@@ -134,7 +197,7 @@ class Auth {
             googleSignInBtn.addEventListener('click', async () => {
                 try {
                     const userData = await this.securityManager.googleAuth.signIn();
-                    await this.handleGoogleSignIn(userData);
+                    await handleGoogleSignIn(userData);
                 } catch (error) {
                     console.error('Google Sign-In failed:', error);
                     alert('Google Sign-In failed. Please try again.');
@@ -181,7 +244,7 @@ class Auth {
         const existingUser = userDB.users.find(u => u.email === userData.email);
         
         if (existingUser) {
-            sessionStorage.setItem('currentUser', JSON.stringify({
+            sessionStorage.setItem('user', JSON.stringify({
                 id: existingUser.id,
                 email: existingUser.email,
                 role: existingUser.role,
@@ -200,13 +263,13 @@ class Auth {
                 twoFactorEnabled: false
             };
             userDB.users.push(newUser);
-            sessionStorage.setItem('currentUser', JSON.stringify(newUser));
+            sessionStorage.setItem('user', JSON.stringify(newUser));
             window.location.href = 'user-dashboard.html';
         }
     }
 
     async setup2FA() {
-        const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+        const currentUser = JSON.parse(sessionStorage.getItem('user'));
         if (!currentUser) return;
 
         const { secret, qrCode } = await this.securityManager.generateQRCode(currentUser.email);
@@ -256,20 +319,14 @@ class Auth {
     }
 
     checkAuthStatus() {
-        const currentUser = sessionStorage.getItem('currentUser');
-        if (currentUser) {
-            const user = JSON.parse(currentUser);
-            if (window.location.pathname.includes('login.html') || 
-                window.location.pathname.includes('register.html')) {
-                window.location.href = user.role === 'staff' ? 'staff-dashboard.html' : 'user-dashboard.html';
-            }
-        } else if (window.location.pathname.includes('dashboard')) {
-            window.location.href = 'login.html';
+        const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+        if (user.isAuthenticated) {
+            document.body.classList.add(user.role === 'owner' ? 'owner-logged-in' : 'user-logged-in');
         }
     }
 
     static logout() {
-        sessionStorage.removeItem('currentUser');
+        sessionStorage.removeItem('user');
         window.location.href = 'login.html';
     }
 
