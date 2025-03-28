@@ -7,9 +7,40 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #6200EA;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .loading-screen .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .dashboard-container {
+            display: none;
+        }
+        .dashboard-container.loaded {
+            display: flex;
+        }
+    </style>
     <script>
-        // Check authentication on page load
-        window.addEventListener('load', () => {
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get user data
             const user = JSON.parse(sessionStorage.getItem('user') || '{}');
             
             // If not authenticated or not staff/owner, redirect to home
@@ -27,10 +58,8 @@
                     el.style.display = 'block';
                 });
             }
-        });
 
-        // Handle logout
-        document.addEventListener('DOMContentLoaded', () => {
+            // Handle logout
             document.getElementById('logoutBtn').addEventListener('click', (e) => {
                 e.preventDefault();
                 // Clear session
@@ -38,10 +67,19 @@
                 // Redirect to home
                 window.location.href = 'index.html';
             });
+
+            // Show dashboard and hide loading screen
+            document.querySelector('.dashboard-container').classList.add('loaded');
+            document.querySelector('.loading-screen').style.display = 'none';
         });
     </script>
 </head>
 <body class="dashboard-body">
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <div class="spinner"></div>
+    </div>
+
     <div class="dashboard-container">
         <aside class="dashboard-sidebar">
             <div class="sidebar-header">
