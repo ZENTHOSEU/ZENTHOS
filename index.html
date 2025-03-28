@@ -7,17 +7,15 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Add reCAPTCHA with explicit render -->
-    <script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit" async defer></script>
-    <script>
-        function onRecaptchaLoad() {
-            grecaptcha.render('recaptcha', {
-                'sitekey': '6LdkTgIrAAAAADoXsKLDqAAT_efR6kzf2pTiV0LP',
-                'theme': 'light',
-                'size': 'normal'
-            });
-        }
-    </script>
+    
+    <!-- JWT Decode -->
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    
+    <!-- Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <!-- reCAPTCHA v2 -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
     <nav>
@@ -181,17 +179,30 @@
 
                     <!-- Add reCAPTCHA -->
                     <div class="form-group">
-                        <div id="recaptcha"></div>
+                        <div class="g-recaptcha" data-sitekey="6LdkTgIrAAAAADoXsKLDqAAT_efR6kzf2pTiV0LP" data-theme="light"></div>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Login</button>
 
-                    <!-- Add Google Sign-In -->
+                    <!-- Google Sign-In -->
                     <div class="social-login">
                         <p>Or sign in with:</p>
-                        <button type="button" id="googleSignIn" class="btn btn-google">
-                            <i class="fab fa-google"></i> Sign in with Google
-                        </button>
+                        <div id="g_id_onload"
+                             data-client_id="511304996179-c4tgbi0fo4do34rkeqj4r6s21hh6co3t.apps.googleusercontent.com"
+                             data-context="signin"
+                             data-ux_mode="popup"
+                             data-callback="handleGoogleSignIn"
+                             data-auto_prompt="false">
+                        </div>
+                        <div class="g_id_signin"
+                             data-type="standard"
+                             data-shape="rectangular"
+                             data-theme="filled_blue"
+                             data-text="signin_with"
+                             data-size="large"
+                             data-width="250"
+                             data-logo_alignment="left">
+                        </div>
                     </div>
 
                     <!-- Add 2FA Setup Button -->
