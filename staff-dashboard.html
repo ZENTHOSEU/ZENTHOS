@@ -82,25 +82,15 @@
             display: flex;
         }
     </style>
+    <script src="auth.js"></script>
     <script>
-        // Check for specific dashboard auth
-        if (!sessionStorage.getItem('dashboardAuth')) {
-            window.location.href = 'index.html';
-        }
-
-        // Remove the auth flag immediately to prevent direct access
-        sessionStorage.removeItem('dashboardAuth');
-
-        // Get user data
-        const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-        
-        // Double check user is still authenticated
-        if (!user.isAuthenticated || (user.role !== 'staff' && user.role !== 'owner')) {
-            window.location.href = 'index.html';
-        }
-
-        // Initialize dashboard when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize auth
+            const auth = new Auth();
+            
+            // Get user data
+            const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+            
             // Update staff name
             document.getElementById('staffName').textContent = user.name;
 
@@ -114,8 +104,7 @@
             // Handle logout
             document.getElementById('logoutBtn').addEventListener('click', (e) => {
                 e.preventDefault();
-                sessionStorage.removeItem('user');
-                window.location.href = 'index.html';
+                Auth.logout();
             });
         });
     </script>

@@ -320,14 +320,29 @@ class Auth {
 
     checkAuthStatus() {
         const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+        const currentPath = window.location.pathname;
+        
+        // If on dashboard, check authorization
+        if (currentPath.includes('staff-dashboard.html')) {
+            if (!user.isAuthenticated || (user.role !== 'staff' && user.role !== 'owner')) {
+                window.location.href = 'index.html';
+                return;
+            }
+        }
+
+        // Update UI based on role
         if (user.isAuthenticated) {
-            document.body.classList.add(user.role === 'owner' ? 'owner-logged-in' : 'user-logged-in');
+            if (user.role === 'owner') {
+                document.body.classList.add('owner-logged-in');
+            } else if (user.role === 'staff') {
+                document.body.classList.add('staff-logged-in');
+            }
         }
     }
 
     static logout() {
         sessionStorage.removeItem('user');
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
     }
 
     async handleRegister(e) {
