@@ -7,6 +7,39 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        // Check authentication on page load
+        window.addEventListener('load', () => {
+            const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+            
+            // If not authenticated or not staff/owner, redirect to home
+            if (!user.isAuthenticated || (user.role !== 'staff' && user.role !== 'owner')) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Update staff name
+            document.getElementById('staffName').textContent = user.name;
+
+            // Show admin controls for owner
+            if (user.role === 'owner') {
+                document.querySelectorAll('.admin-only').forEach(el => {
+                    el.style.display = 'block';
+                });
+            }
+        });
+
+        // Handle logout
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('logoutBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                // Clear session
+                sessionStorage.removeItem('user');
+                // Redirect to home
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
 </head>
 <body class="dashboard-body">
     <div class="dashboard-container">
