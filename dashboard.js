@@ -1,209 +1,226 @@
-// Check authentication
+// Check authentication and initialize dashboard
 document.addEventListener('DOMContentLoaded', () => {
-    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-    
-    if (!user.isAuthenticated || (user.role !== 'staff' && user.role !== 'owner')) {
-        document.getElementById('unauthorizedMessage').style.display = 'flex';
-        document.querySelector('.dashboard-container').style.display = 'none';
-        return;
+    try {
+        const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+        
+        if (!user.isAuthenticated || (user.role !== 'staff' && user.role !== 'owner')) {
+            document.getElementById('unauthorizedMessage').style.display = 'flex';
+            document.querySelector('.dashboard-container').style.display = 'none';
+            return;
+        }
+
+        // Set user information
+        const staffName = document.getElementById('staffName');
+        const profileName = document.getElementById('profileName');
+        if (staffName) staffName.textContent = user.name;
+        if (profileName) profileName.textContent = user.name;
+
+        // Initialize components with error handling
+        initializeUI();
+    } catch (error) {
+        console.error('Dashboard initialization error:', error);
+        showError('Failed to initialize dashboard. Please try logging in again.');
     }
-
-    // Set user information
-    const staffName = document.getElementById('staffName');
-    const profileName = document.getElementById('profileName');
-    if (staffName) staffName.textContent = user.name;
-    if (profileName) profileName.textContent = user.name;
-
-    // Initialize animations
-    initializeAnimations();
-    
-    // Initialize charts
-    initializeCharts();
-    
-    // Show dashboard
-    document.querySelector('.dashboard-body').classList.add('loaded');
 });
+
+// Initialize UI components
+function initializeUI() {
+    try {
+        // Show dashboard
+        document.querySelector('.dashboard-body').classList.add('loaded');
+        
+        // Initialize animations
+        initializeAnimations();
+        
+        // Initialize charts with delay to ensure DOM is ready
+        setTimeout(initializeCharts, 100);
+        
+        // Initialize navigation
+        initializeNavigation();
+    } catch (error) {
+        console.error('UI initialization error:', error);
+        showError('Failed to initialize dashboard interface.');
+    }
+}
 
 // Initialize GSAP animations
 function initializeAnimations() {
-    // Animate stats cards
-    gsap.from('.stat-card', {
-        duration: 0.8,
-        y: 50,
-        opacity: 0,
-        stagger: 0.2,
-        ease: 'power3.out'
-    });
+    try {
+        // Animate stats cards
+        gsap.from('.stat-card', {
+            duration: 0.8,
+            y: 50,
+            opacity: 0,
+            stagger: 0.2,
+            ease: 'power3.out'
+        });
 
-    // Animate charts
-    gsap.from('.chart-card', {
-        duration: 0.8,
-        scale: 0.9,
-        opacity: 0,
-        delay: 0.5,
-        stagger: 0.2,
-        ease: 'back.out(1.7)'
-    });
+        // Animate charts
+        gsap.from('.chart-card', {
+            duration: 0.8,
+            scale: 0.9,
+            opacity: 0,
+            delay: 0.5,
+            stagger: 0.2,
+            ease: 'back.out(1.7)'
+        });
 
-    // Animate activity items
-    gsap.from('.activity-item', {
-        duration: 0.6,
-        x: -50,
-        opacity: 0,
-        stagger: 0.1,
-        delay: 1,
-        ease: 'power2.out'
-    });
+        // Animate activity items
+        gsap.from('.activity-item', {
+            duration: 0.6,
+            x: -50,
+            opacity: 0,
+            stagger: 0.1,
+            delay: 1,
+            ease: 'power2.out'
+        });
+    } catch (error) {
+        console.error('Animation initialization error:', error);
+    }
 }
 
 // Initialize Chart.js charts
 function initializeCharts() {
-    // Project Progress Chart
-    const projectCtx = document.getElementById('projectProgressChart').getContext('2d');
-    new Chart(projectCtx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            datasets: [{
-                label: 'Completed Projects',
-                data: [12, 19, 15, 25, 22, 30],
-                borderColor: '#6200EA',
-                backgroundColor: 'rgba(98, 0, 234, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: false
-                }
+    try {
+        const projectCtx = document.getElementById('projectProgressChart');
+        if (!projectCtx) {
+            console.warn('Project progress chart canvas not found');
+            return;
+        }
+
+        new Chart(projectCtx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Completed Projects',
+                    data: [12, 19, 15, 25, 22, 30],
+                    borderColor: '#6200EA',
+                    backgroundColor: 'rgba(98, 0, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        display: true,
-                        color: 'rgba(0, 0, 0, 0.1)'
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: false
                     }
                 },
-                x: {
-                    grid: {
-                        display: false
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
                     }
                 }
             }
-        }
-    });
+        });
 
-    // Task Distribution Chart
-    const taskCtx = document.getElementById('taskDistributionChart').getContext('2d');
-    new Chart(taskCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Completed', 'In Progress', 'Pending', 'Delayed'],
-            datasets: [{
-                data: [45, 25, 20, 10],
-                backgroundColor: [
-                    '#00C853',
-                    '#6200EA',
-                    '#03DAC6',
-                    '#CF6679'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'right'
-                }
-            },
-            cutout: '70%'
+        const taskCtx = document.getElementById('taskDistributionChart');
+        if (!taskCtx) {
+            console.warn('Task distribution chart canvas not found');
+            return;
         }
-    });
+
+        new Chart(taskCtx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Completed', 'In Progress', 'Pending'],
+                datasets: [{
+                    data: [65, 25, 10],
+                    backgroundColor: ['#6200EA', '#03DAC6', '#B00020'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    } catch (error) {
+        console.error('Chart initialization error:', error);
+        showError('Failed to initialize dashboard charts.');
+    }
 }
 
-// Navigation handling
-document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        // Remove active class from all items
-        document.querySelectorAll('.nav-item').forEach(navItem => {
-            navItem.classList.remove('active');
+// Initialize navigation
+function initializeNavigation() {
+    try {
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = item.getAttribute('href').substring(1);
+                showSection(targetId);
+            });
         });
-        
-        // Add active class to clicked item
-        item.classList.add('active');
-        
-        // Animate section change (to be implemented based on sections)
-        const targetSection = item.getAttribute('href').substring(1);
-        showSection(targetSection);
-    });
-});
+    } catch (error) {
+        console.error('Navigation initialization error:', error);
+    }
+}
 
 // Show section with animation
 function showSection(sectionId) {
-    const sections = document.querySelectorAll('.dashboard-section');
-    sections.forEach(section => {
-        if (section.id === sectionId) {
-            gsap.to(section, {
-                duration: 0.5,
-                opacity: 1,
-                x: 0,
-                display: 'block',
-                ease: 'power2.out'
-            });
-        } else {
-            gsap.to(section, {
+    try {
+        // Hide all sections
+        document.querySelectorAll('.dashboard-section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // Show target section
+        const targetSection = document.getElementById(sectionId);
+        if (targetSection) {
+            targetSection.classList.add('active');
+            
+            // Animate in
+            gsap.from(targetSection, {
                 duration: 0.5,
                 opacity: 0,
-                x: 50,
-                display: 'none',
-                ease: 'power2.in'
+                y: 20,
+                ease: 'power2.out'
             });
         }
-    });
+    } catch (error) {
+        console.error('Section transition error:', error);
+    }
+}
+
+// Show error message
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    document.body.appendChild(errorDiv);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        errorDiv.remove();
+    }, 5000);
 }
 
 // Logout functionality
-document.getElementById('logoutBtn').addEventListener('click', () => {
-    sessionStorage.removeItem('user');
-    sessionStorage.removeItem('dashboardAuth');
-    window.location.href = 'index.html';
-});
-
-// Search functionality
-const searchInput = document.querySelector('.header-search input');
-searchInput.addEventListener('input', (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    // Implement search functionality here
-    // This is a placeholder for the search feature
-    console.log('Searching for:', searchTerm);
-});
-
-// Add smooth hover effect to cards
-document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        const rotateX = (y - centerY) / 20;
-        const rotateY = -(x - centerX) / 20;
-        
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-    });
-    
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = 'none';
-    });
+document.getElementById('logoutBtn')?.addEventListener('click', () => {
+    try {
+        sessionStorage.removeItem('user');
+        window.location.href = 'index.html';
+    } catch (error) {
+        console.error('Logout error:', error);
+        showError('Failed to log out. Please try again.');
+    }
 });
