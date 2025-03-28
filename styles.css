@@ -530,72 +530,102 @@ footer {
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
-    .menu-toggle {
-        display: block;
+    body {
+        font-size: 16px;
     }
 
-    .nav-links {
-        display: none;
-        position: absolute;
-        top: var(--nav-height);
-        left: 0;
-        width: 100%;
-        background: var(--primary-color);
-        flex-direction: column;
+    .auth-container {
+        width: 90%;
+        margin: 1rem auto;
         padding: 1rem;
     }
 
+    .auth-box {
+        padding: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+        font-size: 16px; /* Prevents iOS zoom on focus */
+        padding: 0.8rem;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 1rem;
+        font-size: 16px;
+    }
+
+    .g-recaptcha {
+        transform: scale(0.9);
+        transform-origin: 0 0;
+        margin-bottom: 1rem;
+    }
+
+    .social-login button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .section {
+        padding: 2rem 1rem;
+    }
+
+    .card {
+        margin: 0.5rem 0;
+    }
+
+    /* Fix navigation on mobile */
+    .nav-links {
+        position: fixed;
+        top: var(--nav-height);
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - var(--nav-height));
+        background: var(--bg-color);
+        flex-direction: column;
+        padding: 1rem;
+        transition: left 0.3s ease;
+    }
+
     .nav-links.active {
-        display: flex;
+        left: 0;
     }
 
     .nav-links li {
         margin: 1rem 0;
-        text-align: center;
     }
 
-    .nav-login {
-        display: inline-block;
-        margin-top: 0.5rem;
+    .menu-toggle {
+        display: block;
     }
 
-    /* Fix mobile zoom */
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    textarea {
-        font-size: 16px !important;
-    }
-
-    /* Adjust container padding */
-    .container {
-        padding: 1rem;
-    }
-
-    /* Make buttons more tappable */
-    button {
-        min-height: 44px;
-        min-width: 44px;
-    }
-
-    .hero h1 {
-        font-size: 2.5rem;
-    }
-    
-    section {
-        padding: 3rem 5%;
-    }
-    
     .footer-content {
         flex-direction: column;
         text-align: center;
         gap: 1rem;
     }
-    
+
     .footer-contact {
         text-align: center;
     }
-    
+
     .live-chat-widget {
         width: 100%;
         max-width: 350px;
@@ -603,10 +633,22 @@ footer {
         right: 0;
         border-radius: 10px 0 0 0;
     }
-    
+
     .project-request-container {
         margin: 100px auto 30px;
         padding: 1rem;
+    }
+}
+
+/* Tablet Responsive Styles */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .auth-container {
+        width: 70%;
+    }
+
+    .g-recaptcha {
+        transform: scale(1);
+        margin: 0 auto;
     }
 }
 
@@ -1220,4 +1262,33 @@ footer {
 #loginModal .auth-box {
     margin: 0;
     width: 100%;
+}
+
+/* Auth styles */
+.owner-logged-in .nav-login {
+    display: none;
+}
+
+.owner-logged-in .auth-container {
+    display: none;
+}
+
+/* Add a logged-in indicator */
+.owner-logged-in .nav-links::after {
+    content: "Owner";
+    color: #3d3c40;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    margin-left: 1rem;
+    font-size: 0.8rem;
+}
+
+/* Show owner-specific elements */
+.owner-controls {
+    display: none;
+}
+
+.owner-logged-in .owner-controls {
+    display: block;
 }

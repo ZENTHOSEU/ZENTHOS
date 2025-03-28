@@ -16,6 +16,50 @@
     
     <!-- reCAPTCHA v2 -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <script>
+        function handleCredentialResponse(response) {
+            // Decode the credential response
+            const responsePayload = jwt_decode(response.credential);
+            
+            // Check if it's the owner email
+            if (responsePayload.email === 'spoonfullofjamie@gmail.com') {
+                // Store the user info
+                sessionStorage.setItem('user', JSON.stringify({
+                    email: responsePayload.email,
+                    name: responsePayload.name,
+                    role: 'owner',
+                    isAuthenticated: true
+                }));
+                
+                // Update UI
+                document.body.classList.add('owner-logged-in');
+                
+                // Close login modal
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) {
+                    loginModal.classList.remove('active');
+                }
+                
+                // Show welcome message
+                alert('Welcome back, Owner!');
+            } else {
+                // Handle regular user login
+                sessionStorage.setItem('user', JSON.stringify({
+                    email: responsePayload.email,
+                    name: responsePayload.name,
+                    role: 'user',
+                    isAuthenticated: true
+                }));
+                
+                // Close login modal
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) {
+                    loginModal.classList.remove('active');
+                }
+            }
+        }
+    </script>
 </head>
 <body>
     <nav>
@@ -190,8 +234,8 @@
                         <div id="g_id_onload"
                              data-client_id="511304996179-c4tgbi0fo4do34rkeqj4r6s21hh6co3t.apps.googleusercontent.com"
                              data-context="signin"
-                             data-ux_mode="redirect"
-                             data-login_uri="https://zenthos.netlify.app"
+                             data-ux_mode="popup"
+                             data-callback="handleCredentialResponse"
                              data-auto_prompt="false">
                         </div>
                         <div class="g_id_signin"
